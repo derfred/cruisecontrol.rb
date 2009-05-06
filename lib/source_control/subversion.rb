@@ -23,6 +23,7 @@ module SourceControl
       @password = options.delete(:password)
       @interactive = options.delete(:interactive)
       @check_externals = options.has_key?(:check_externals) ? options.delete(:check_externals) : true
+      @extra_options = options.delete(:extra_options)
 
       if options[:branch]
         raise "Subversion doesn't accept --branch property. You should specify Subversion URL for the branch in the --repository option."
@@ -85,7 +86,7 @@ module SourceControl
 
     def update(revision = nil)
       revision_number = revision ? revision_number(revision) : 'HEAD'
-      svn_output = svn('update', ["--revision", revision_number])
+      svn_output = svn('update', ["--revision", revision_number, @extra_options].reject(&:nil?))
       Subversion::UpdateParser.new.parse(svn_output)
     end
 

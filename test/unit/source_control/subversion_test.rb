@@ -70,6 +70,15 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
     svn.update(Subversion::Revision.new(revision_number))
   end
 
+  def test_update_with_extra_options
+    revision_number = 10
+
+    svn = new_subversion :extra_options => "--accept theirs-full"
+    svn.expects(:svn).with("update", ["--revision", revision_number, "--accept theirs-full"]).returns("your mom")
+
+    svn.update(Subversion::Revision.new(revision_number))
+  end
+
   def test_latest_revision
     svn = new_subversion
     svn.expects(:log).with("HEAD", "1", ["--limit", "1"]).returns(LOG_ENTRY.split("\n"))
